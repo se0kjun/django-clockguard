@@ -8,3 +8,4 @@ This apps can block urls during specific time period.
 - [x] models
 - [x] forms
 - [ ] example
+- [ ] decorator

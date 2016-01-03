@@ -12,6 +12,20 @@ class InsertClockGuardForm(forms.Form):
 		super(InsertClockGuardForm, self).__init__(*args, **kwargs)
 		self.fields['page_url'].choices = self._get_url_list()
 	
+	def _get_url_recursive(self, module):
+		url_module = module._urlconf_module
+		url_list = []
+		
+		if hasattr(url_module, 'urlpatterns'):
+			for pat in url_module.urlpatterns:
+				if hasattr(pat, '_urlconf_module'):
+					url_list.extend(self._get_url_recursive(pat))
+				else:
+					url_list.append((pat.name, pat._regex))
+					continue
+
+		return tuple(url_list)
+
 	def _get_url_list(self):
 		_url_list = []
 		if hasattr(settings, 'CLOCKGUARD_ROOT_URL'):
@@ -23,22 +37,12 @@ class InsertClockGuardForm(forms.Form):
 
 		for url in urlconf.urlpatterns:
 			if hasattr(url, '_urlconf_module'):
-				_url_list.extend(_get_url_recursive(url))
+				_url_list.extend(self._get_url_recursive(url))
 			else:
-				_url_list.append(url._regex)
+				_url_list.append((url.name, url._regex))
 
 		return _url_list
 
 
-	def _get_url_recursive(self, module):
-		url_module = module._urlconf_module
-		url_list = []
-		for pat in url_module.urlpatterns:
-			if hasattr(pat, '_urlconf_module'):
-				url_list.extend(self._get_url_recursive(pat))
-			else:
-				url_list.append(pat._regex)
-				continue
 
-		return url_list
 

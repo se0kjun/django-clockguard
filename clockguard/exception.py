@@ -1,0 +1,3 @@
+
+class RedirectCycleException(Exception):
+    pass

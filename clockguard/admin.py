@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from clockguard.models import *
+from .models import ClockGuardModel
 
 class ClockGuardAdmin(admin.ModelAdmin):
 	pass
